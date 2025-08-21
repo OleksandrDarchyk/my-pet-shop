@@ -30,25 +30,38 @@ export default function Home() {
         })();
     }, []);
 
-    if (error) return <p style={{ color: "crimson" }}>{error}</p>;
+    if (error) return <p style={{color: "crimson"}}>{error}</p>;
     if (pets.length === 0) return <p>Loading...</p>;
 
     return (
-        <div>
-            <h2>Home (pets)</h2>
+        <div className="space-y-4">
+            <h2 className="text-2xl font-semibold">Home (pets)</h2>
             <p>Total: {pets.length}</p>
 
-            <ul>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {pets.map((p) => (
-                    <li key={p.id}>
-                        <div><b>id:</b> {String(p.id)}</div>
-                        <Link to={`/pet/${p.id}`}>{p.name}</Link>
-                    </li>
+                    <div key={p.id} className="card bg-base-100 shadow">
+                        {p.imgurl && (
+                            <figure className="p-4">
+                                <img
+                                    src={p.imgurl}
+                                    alt={p.name ?? "Pet"}
+                                    className="rounded max-h-48 w-full object-cover"
+                                />
+                            </figure>
+                        )}
+                        <div className="card-body">
+                            <h3 className="card-title">{p.name}</h3>
+                            <p className="text-sm opacity-80">Breed: {p.breed}</p>
+                            <div className="card-actions justify-end">
+                                <Link to={`/pet/${p.id}`} className="btn btn-outline btn-sm">
+                                    View
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
                 ))}
-            </ul>
-
-
-            <pre>{JSON.stringify(pets, null, 2)}</pre>
+            </div>
         </div>
     );
 }
