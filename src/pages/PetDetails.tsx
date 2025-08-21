@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import { api } from "../api/client";
 import type {AxiosError} from "axios";
 
@@ -18,6 +18,7 @@ export default function PetDetails() {
     const [error, setError] = useState<string | null>(null);
     const [saving, setSaving] = useState<boolean>(false);
     const [deleting, setDeleting] = useState<boolean>(false);
+    const navigate = useNavigate();
 
 
     useEffect(() => {
@@ -55,7 +56,7 @@ export default function PetDetails() {
                 imgurl: pet.imgurl,
                 sold: newSoldStatus,
             });
-            setPet(res.data); // оновлюємо стан фактичними даними із сервера
+            setPet(res.data);
         } catch (e) {
             const err = e as AxiosError<{ title?: string }>;
             alert(err.response?.data?.title ?? "Failed to update pet");
@@ -72,7 +73,7 @@ export default function PetDetails() {
         try {
             await api.deletePet.petDeletePet({ id: pet.id });
             alert("Pet deleted");
-            window.location.href = "/";
+            navigate("/")
         }catch (e){
             const err = e as AxiosError<{ title?: string }>;
             alert(err.response?.data?.title ?? "Failed to delete pet");
