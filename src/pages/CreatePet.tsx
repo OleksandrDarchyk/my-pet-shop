@@ -5,6 +5,10 @@ export default function CreatePet() {
     const [breed, setBreed] = useState("");
     const [imgurl, setImgurl] = useState("");
 
+    function handleSubmit() {
+        console.log("Creating pet", { name, breed, imgurl });
+    }
+
     return (
         <div className="space-y-4 max-w-md">
             <h2 className="text-2xl font-semibold">Create a New Pet</h2>
@@ -52,6 +56,9 @@ export default function CreatePet() {
             {imgurl && (
                 <img src={imgurl} alt="preview" className="rounded border max-w-xs" />
             )}
+
+            <button className="btn btn-primary w-full mt-4"
+            onClick={handleSubmit}></button>
         </div>
     );
 }
