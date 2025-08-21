@@ -17,6 +17,7 @@ export default function PetDetails() {
     const [pet, setPet] = useState<Pet | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [saving, setSaving] = useState<boolean>(false);
+    const [deleting, setDeleting] = useState<boolean>(false);
 
 
     useEffect(() => {
@@ -63,6 +64,23 @@ export default function PetDetails() {
         }
     }
 
+    async function handleDeletePet() {
+        if (!pet?.id) return;
+        if (!confirm("Delete this pet?")) return;
+
+        setDeleting(true);
+        try {
+            await api.deletePet.petDeletePet({ id: pet.id });
+            alert("Pet deleted");
+            window.location.href = "/";
+        }catch (e){
+            const err = e as AxiosError<{ title?: string }>;
+            alert(err.response?.data?.title ?? "Failed to delete pet");
+        }
+        finally {
+            setDeleting(false);
+        }
+    }
 
     return (
         <div>
@@ -76,10 +94,15 @@ export default function PetDetails() {
                     <img src={pet.imgurl} alt={pet.name ?? "Pet"} style={{ maxWidth: 320 }} />
                 </div>
             )}
-            <button className={`btn ${pet?.sold ? "btn-warning":"btn-success"} mr-2`}
+            <button className={`btn ${pet?.sold ? "btn-warning":"btn-success"} w-48`}
                     disabled={saving}
                     onClick={handleToggleSold}>
                 {saving ? "Saving..." : pet.sold ? "Mark as Available" : "Mark as Sold"}
+            </button>
+            <button   className="btn btn-error w-48 ml-2"
+            disabled={saving}
+            onClick={handleDeletePet}>
+                {deleting ? "Deleting..." : "Delete Pet"}
             </button>
         </div>
     );
