@@ -1,13 +1,31 @@
 import {useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {api} from "../api/client";
 
 export default function CreatePet() {
     const [name, setName] = useState("");
     const [breed, setBreed] = useState("");
     const [imgurl, setImgurl] = useState("");
+    const [submitting, setSubmitting] = useState(false);
+    const navigate = useNavigate();
 
-    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        console.log("Creating pet", {name, breed, imgurl});
+       if(!name.trim() || !breed.trim() || !imgurl.trim()) {
+          alert("Fill up all fields!");
+            return;
+       }
+       setSubmitting(true);
+       try {
+           const res = await api.createPet.petCreatePet({name, breed, imgurl,});
+           navigate(`/pet/${res.data.id}`);
+       }
+       catch (e: any){
+           alert(e.response?.data?.title ?? "Failed to create pet");
+       }
+       finally {
+           setSubmitting(false);
+       }
     }
 
     return (
@@ -58,8 +76,8 @@ export default function CreatePet() {
                 <img src={imgurl} alt="preview" className="rounded border max-w-xs"/>
             )}
 
-            <button type="submit" className="btn btn-primary w-full mt-4">
-                Create Pet
+            <button type="submit" className="btn btn-primary w-full mt-4" disabled={submitting}>
+                {submitting ? "Creating..." : "Create Pet"}
             </button>
 
         </form>
