@@ -100,6 +100,7 @@ export default function PetDetails() {
                     onClick={handleToggleSold}>
                 {saving ? "Saving..." : pet.sold ? "Mark as Available" : "Mark as Sold"}
             </button>
+
             <button   className="btn btn-error w-48 ml-2"
             disabled={saving}
             onClick={handleDeletePet}>

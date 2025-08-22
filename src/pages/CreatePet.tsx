@@ -1,16 +1,17 @@
-import { useState } from "react";
+import {useState} from "react";
 
 export default function CreatePet() {
     const [name, setName] = useState("");
     const [breed, setBreed] = useState("");
     const [imgurl, setImgurl] = useState("");
 
-    function handleSubmit() {
-        console.log("Creating pet", { name, breed, imgurl });
+    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        console.log("Creating pet", {name, breed, imgurl});
     }
 
     return (
-        <div className="space-y-4 max-w-md">
+        <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
             <h2 className="text-2xl font-semibold">Create a New Pet</h2>
 
             <div className="form-control">
@@ -54,11 +55,13 @@ export default function CreatePet() {
             </p>
 
             {imgurl && (
-                <img src={imgurl} alt="preview" className="rounded border max-w-xs" />
+                <img src={imgurl} alt="preview" className="rounded border max-w-xs"/>
             )}
 
-            <button className="btn btn-primary w-full mt-4"
-            onClick={handleSubmit}></button>
-        </div>
+            <button type="submit" className="btn btn-primary w-full mt-4">
+                Create Pet
+            </button>
+
+        </form>
     );
 }
