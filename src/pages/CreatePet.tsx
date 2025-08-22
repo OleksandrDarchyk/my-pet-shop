@@ -3,6 +3,7 @@ import {useNavigate} from "react-router-dom";
 import {api} from "../api/client";
 import type {AxiosError} from "axios";
 import toast from "react-hot-toast";
+import type {CreatePetDto} from "../api/client";
 
 export default function CreatePet() {
     const [name, setName] = useState("");
@@ -12,15 +13,15 @@ export default function CreatePet() {
     const navigate = useNavigate();
 
    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-        e.preventDefault();
+       e.preventDefault();
        if(!name.trim() || !breed.trim() || !imgurl.trim()) {
         toast.error("Please fill in all fields");
             return;
        }
        setSubmitting(true);
        try {
-           const res = await api.createPet.petCreatePet({name, breed, imgurl,});
-              toast.success("Pet created successfully!");
+           const body: CreatePetDto = { name, breed, imgurl };
+           const res = await api.createPet.petCreatePet(body);
            navigate(`/pet/${res.data.id}`);
        }
        catch (e: unknown) {
