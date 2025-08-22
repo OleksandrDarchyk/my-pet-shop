@@ -13,6 +13,7 @@ type Pet = {
 export default function Home() {
     const [pets, setPets] = useState<Pet[]>([]);
     const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         (async () => {
@@ -20,17 +21,17 @@ export default function Home() {
                 const res = await api.getPets.petGetPets();
                 setPets(res.data);
             } catch (e: unknown) {
-                if (e instanceof Error) {
-                    setError(e.message);
-                } else {
-                    setError("Failed to load pets");
-                }
+                if (e instanceof Error) setError(e.message);
+                else setError("Failed to load pets");
+            } finally {
+                setLoading(false);
             }
 
         })();
     }, []);
 
     if (error) return <p style={{color: "crimson"}}>{error}</p>;
+    if (loading) return <p>Loading...</p>;
     if (pets.length === 0) return <p>Loading...</p>;
 
     return (

@@ -102,7 +102,7 @@ export default function PetDetails() {
             </button>
 
             <button   className="btn btn-error w-48 ml-2"
-            disabled={saving}
+            disabled={deleting}
             onClick={handleDeletePet}>
                 {deleting ? "Deleting..." : "Delete Pet"}
             </button>

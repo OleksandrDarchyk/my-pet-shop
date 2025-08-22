@@ -1,6 +1,7 @@
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {api} from "../api/client";
+import type {AxiosError} from "axios";
 
 export default function CreatePet() {
     const [name, setName] = useState("");
@@ -20,8 +21,9 @@ export default function CreatePet() {
            const res = await api.createPet.petCreatePet({name, breed, imgurl,});
            navigate(`/pet/${res.data.id}`);
        }
-       catch (e: any){
-           alert(e.response?.data?.title ?? "Failed to create pet");
+       catch (e: unknown) {
+           const err = e as AxiosError<{ title?: string }>;
+           alert(err.response?.data?.title ?? "Failed to create pet");
        }
        finally {
            setSubmitting(false);
@@ -41,6 +43,7 @@ export default function CreatePet() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Rex"
+                    required
                 />
             </div>
 
@@ -53,6 +56,7 @@ export default function CreatePet() {
                     value={breed}
                     onChange={(e) => setBreed(e.target.value)}
                     placeholder="Dog"
+                    required
                 />
             </div>
 
@@ -65,6 +69,8 @@ export default function CreatePet() {
                     value={imgurl}
                     onChange={(e) => setImgurl(e.target.value)}
                     placeholder="https://..."
+                    type="url"
+                    required
                 />
             </div>
 
