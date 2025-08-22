@@ -1,17 +1,11 @@
 import {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import {api} from "../api/client";
+import type { PetDto } from "../api/client";
 
-type Pet = {
-    id?: string;
-    name?: string;
-    breed?: string;
-    imgurl?: string;
-    sold?: boolean;
-};
 
 export default function Home() {
-    const [pets, setPets] = useState<Pet[]>([]);
+    const [pets, setPets] = useState<PetDto[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -32,7 +26,7 @@ export default function Home() {
 
     if (error) return <p style={{color: "crimson"}}>{error}</p>;
     if (loading) return <p>Loading...</p>;
-    if (pets.length === 0) return <p>Loading...</p>;
+    if (pets.length === 0) return <p>No pets yet</p>;
 
     return (
         <div className="space-y-4">
