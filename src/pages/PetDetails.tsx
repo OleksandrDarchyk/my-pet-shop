@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import { api } from "../api/client";
 import type {AxiosError} from "axios";
+import toast from "react-hot-toast";
 
 
 type Pet = {
@@ -57,9 +58,10 @@ export default function PetDetails() {
                 sold: newSoldStatus,
             });
             setPet(res.data);
+            toast.success(`Pet marked as ${newSoldStatus ? "sold" : "available"}`);
         } catch (e) {
             const err = e as AxiosError<{ title?: string }>;
-            alert(err.response?.data?.title ?? "Failed to update pet");
+            toast.error(err.response?.data?.title ?? "Failed to update pet");
         } finally {
             setSaving(false);
         }
@@ -72,11 +74,11 @@ export default function PetDetails() {
         setDeleting(true);
         try {
             await api.deletePet.petDeletePet({ id: pet.id });
-            alert("Pet deleted");
+          toast("Pet deleted ");
             navigate("/")
         }catch (e){
             const err = e as AxiosError<{ title?: string }>;
-            alert(err.response?.data?.title ?? "Failed to delete pet");
+           toast.error(err.response?.data?.title ?? "Failed to delete pet");
         }
         finally {
             setDeleting(false);

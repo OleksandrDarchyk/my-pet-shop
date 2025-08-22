@@ -1,6 +1,8 @@
 
 import './App.css'
 import {Link, Outlet} from "react-router-dom";
+import {Toaster} from "react-hot-toast";
+
 
 function App() {
 
@@ -18,7 +20,7 @@ function App() {
             <Outlet />
             <hr className="mt-6" />
         </div>
-
+        <Toaster position="top-center"></Toaster>
     </>
   )
 }

@@ -2,6 +2,7 @@ import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {api} from "../api/client";
 import type {AxiosError} from "axios";
+import toast from "react-hot-toast";
 
 export default function CreatePet() {
     const [name, setName] = useState("");
@@ -13,18 +14,18 @@ export default function CreatePet() {
    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
        if(!name.trim() || !breed.trim() || !imgurl.trim()) {
-          alert("Fill up all fields!");
+        toast.error("Please fill in all fields");
             return;
        }
        setSubmitting(true);
        try {
            const res = await api.createPet.petCreatePet({name, breed, imgurl,});
+              toast.success("Pet created successfully!");
            navigate(`/pet/${res.data.id}`);
        }
        catch (e: unknown) {
            const err = e as AxiosError<{ title?: string }>;
-           alert(err.response?.data?.title ?? "Failed to create pet");
-       }
+           toast.error(err.response?.data?.title ?? "Failed to create pet");       }
        finally {
            setSubmitting(false);
        }
