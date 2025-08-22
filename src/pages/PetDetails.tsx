@@ -1,21 +1,13 @@
 import { useEffect, useState } from "react";
 import {useNavigate, useParams} from "react-router-dom";
-import { api } from "../api/client";
+import {api, type PetDto, type UpdatePetDto} from "../api/client";
 import type {AxiosError} from "axios";
 import toast from "react-hot-toast";
 
 
-type Pet = {
-    id?: string;
-    name?: string;
-    breed?: string;
-    imgurl?: string;
-    sold?: boolean;
-};
-
 export default function PetDetails() {
     const { petId } = useParams();
-    const [pet, setPet] = useState<Pet | null>(null);
+    const [pet, setPet] = useState<PetDto | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [saving, setSaving] = useState<boolean>(false);
     const [deleting, setDeleting] = useState<boolean>(false);
@@ -30,16 +22,19 @@ export default function PetDetails() {
             try {
                 const res = await api.getPetById.petGetPetById({ id: petId.toString() });
                 setPet(res.data);
-            } catch (e: unknown) {
-                if (e instanceof Error) {
-                    setError(e.message);
-                } else {
-                    setError("Failed to load pet");
+            } catch (e) {
+                const err = e as AxiosError<{ title?: string }>;
+                if (err.response?.status === 404) {
+                    toast.error("Pet not found");
+                    navigate("/");
+                    return;
                 }
+                toast.error(err.response?.data?.title ?? "Failed to load pet");
+                setError(err.message);
             }
 
         })();
-    }, [petId]);
+    }, [petId, navigate]);
 
     if (error) return <p style={{ color: "crimson" }}>{error}</p>;
     if (!pet) return <p>Loading...</p>;
@@ -50,13 +45,14 @@ export default function PetDetails() {
         const newSoldStatus = !pet.sold;
         setSaving(true);
         try {
-            const res = await api.updatePet.petUpdatePet({
+            const payload : UpdatePetDto = {
                 id: pet.id,
                 name: pet.name,
                 breed: pet.breed,
                 imgurl: pet.imgurl,
                 sold: newSoldStatus,
-            });
+            };
+            const res = await api.updatePet.petUpdatePet(payload);
             setPet(res.data);
             toast.success(`Pet marked as ${newSoldStatus ? "sold" : "available"}`);
         } catch (e) {
@@ -74,7 +70,7 @@ export default function PetDetails() {
         setDeleting(true);
         try {
             await api.deletePet.petDeletePet({ id: pet.id });
-          toast("Pet deleted ");
+          toast.success("Pet deleted ");
             navigate("/")
         }catch (e){
             const err = e as AxiosError<{ title?: string }>;
